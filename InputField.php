@@ -34,22 +34,26 @@ class InputField extends Field {
 	 */
 	protected function _setUp( array $args ) {
 
+		// Setup attributes
 		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
 
 		if ( isset( $args['type'] ) ) {
 			$this->type = $atts['type'] = $args['type'];
 		}
 
-		$this->el = ElementFactory::createElement( 'input', $atts );
+		// Setup input element
+		$this->el = ElementFactory::createElement(
+			'input',
+			array_map( 'esc_attr', $atts )
+		);
 
-		/*// Setup input
-		$this->el = new EmptyElement( 'input' );
-		$this->el->atts->set( 'id', esc_attr( $this->name ) );
-		$this->el->atts->set( 'name', esc_attr( $this->name ) );*/
-
-		// Setup label
+		// Setup label element
 		$this->labelEl = new EnclosingElement( 'label' );
-		$this->labelEl->atts->set( 'for', esc_attr( $this->name ) );
+
+		// Ensure HTML id is set on input and the for attribute on label matches
+		$id = isset( $atts['id'] ) ? $atts['id'] : $this->_name;
+		$this->el->atts->set( 'id', esc_attr( $id ) );
+		$this->labelEl->atts->set( 'for', esc_attr( $id ) );
 	}
 
 	/**
@@ -75,7 +79,9 @@ class InputField extends Field {
 	 * @return string
 	 */
 	public function getField() {
-		$this->el->atts->set( 'type', esc_attr( $this->type ) );
+
+		// Output the name and value properties
+		$this->el->atts->set( 'name', esc_attr( $this->_name ) );
 		$this->el->atts->set( 'value', esc_attr( $this->_value ) );
 
 		return "{$this->el}";
