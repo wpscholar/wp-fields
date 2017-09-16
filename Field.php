@@ -70,13 +70,12 @@ abstract class Field {
 	 * Field constructor.
 	 *
 	 * @param string $name
-	 * @param string $label
 	 * @param array $args
 	 */
-	public function __construct( $name, $label = '', array $args = [] ) {
-		$storageType    = isset( $args['storage_type'] ) ? $args['storage_type'] : 'post_meta';
-		$this->_name    = $name;
-		$this->label    = $label;
+	public function __construct( $name, array $args = [] ) {
+		$storageType = isset( $args['storage_type'] ) ? $args['storage_type'] : 'post_meta';
+		$this->_name = $name;
+		$this->label = isset( $args ['label'] ) ? $args['label'] : '';
 		$this->_storage = FieldStorageFactory::create( $storageType );
 		$this->_setUp( $args );
 	}
@@ -177,7 +176,7 @@ abstract class Field {
 	 * @return mixed
 	 */
 	public function __get( $property ) {
-		$value  = null;
+		$value = null;
 		$method = "_get_{$property}";
 		if ( method_exists( $this, $method ) && is_callable( [ $this, $method ] ) ) {
 			$value = $this->$method();
