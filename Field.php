@@ -136,15 +136,6 @@ abstract class Field {
 	abstract public function getField();
 
 	/**
-	 * Get label and field HTML
-	 *
-	 * @return string
-	 */
-	public function __toString() {
-		return "{$this->getLabel()} {$this->getField()}";
-	}
-
-	/**
 	 * Render field
 	 */
 	public function render() {
@@ -206,6 +197,15 @@ abstract class Field {
 		if ( method_exists( $this, $method ) && is_callable( [ $this, $method ] ) ) {
 			$this->$method( $value );
 		}
+	}
+
+	/**
+	 * Get label and field HTML
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return "{$this->getLabel()} {$this->getField()}";
 	}
 
 }
