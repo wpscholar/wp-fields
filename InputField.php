@@ -41,6 +41,10 @@ class InputField extends Field {
 			$this->type = $atts['type'] = $args['type'];
 		}
 
+		if ( isset( $atts['value'] ) ) {
+			$this->value = $atts['value'];
+		}
+
 		// Setup input element
 		$this->el = ElementFactory::createElement(
 			'input',
