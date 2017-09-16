@@ -3,11 +3,11 @@
 namespace wpscholar\WordPress;
 
 /**
- * Class FieldGroup
+ * Class FieldContainer
  *
  * @package wpscholar\WordPress
  */
-class FieldGroup implements \IteratorAggregate {
+class FieldContainer implements \IteratorAggregate {
 
 	/**
 	 * Field collection
@@ -17,7 +17,7 @@ class FieldGroup implements \IteratorAggregate {
 	protected $_fields = [];
 
 	/**
-	 * Check if field exists in group.
+	 * Check if field exists in container.
 	 *
 	 * @param string $field_name
 	 *
@@ -28,7 +28,7 @@ class FieldGroup implements \IteratorAggregate {
 	}
 
 	/**
-	 * Get a field from the group by name
+	 * Get a field from the container by name
 	 *
 	 * @param string $field_name
 	 *
@@ -44,7 +44,7 @@ class FieldGroup implements \IteratorAggregate {
 	}
 
 	/**
-	 * Add a field to the group
+	 * Add a field to the container
 	 *
 	 * @param Field $field
 	 */
@@ -53,7 +53,7 @@ class FieldGroup implements \IteratorAggregate {
 	}
 
 	/**
-	 * Remove a field from the group by name
+	 * Remove a field from the container by name
 	 *
 	 * @param string $field_name
 	 */
