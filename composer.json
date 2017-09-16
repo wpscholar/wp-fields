@@ -1,5 +1,6 @@
 {
   "name": "wpscholar/wp-fields",
+  "description": "A WordPress library for creating and working with fields",
   "type": "library",
   "license": "GPL-2.0+",
   "authors": [
