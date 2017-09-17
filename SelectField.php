@@ -102,7 +102,7 @@ class SelectField extends Field {
 		// Setup name with proper support for multiple submissions
 		$name = $this->_name;
 		if ( $this->el->atts->has( 'multiple' ) ) {
-			$name .= [];
+			$name .= '[]';
 		}
 
 		// Output the name and value properties
