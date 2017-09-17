@@ -37,8 +37,13 @@ class InputField extends Field {
 		// Setup attributes
 		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
 
+		// Set default value
 		if ( isset( $args['type'] ) ) {
-			$this->type = $atts['type'] = $args['type'];
+			$atts['type'] = $args['type'];
+		}
+
+		if ( isset( $atts['type'] ) ) {
+			$this->type = $atts['type'];
 		}
 
 		if ( isset( $atts['value'] ) ) {
