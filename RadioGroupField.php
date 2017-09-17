@@ -77,7 +77,7 @@ class RadioGroupField extends Field {
 			}
 		}
 
-		// Setup input element
+		// Setup fieldset
 		$this->el = ElementFactory::createElement( 'fieldset', array_map( 'esc_attr', $atts ) );
 
 		// Setup label element
@@ -101,11 +101,13 @@ class RadioGroupField extends Field {
 	 */
 	public function getField() {
 
-		$legend = new EnclosingElement( 'legend' );
-		$legend->content = esc_html( $this->label );
-
 		$this->el->removeAll();
-		$this->el->append( $legend );
+
+		if ( $this->label ) {
+			$legend = new EnclosingElement( 'legend' );
+			$legend->content = esc_html( $this->label );
+			$this->el->append( $legend );
+		}
 
 		foreach ( $this->fields as $field ) {
 			/**
