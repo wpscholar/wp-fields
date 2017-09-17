@@ -31,6 +31,9 @@ class FieldFactory {
 
 			// If 'fieldClass' is not set, but 'field' is, then use that to determine the appropriate field class.
 			switch ( $args['field'] ) {
+				case 'radio-group':
+					$fieldClass = __NAMESPACE__ . '\\RadioGroupField';
+					break;
 				case 'select':
 					$fieldClass = __NAMESPACE__ . '\\SelectField';
 					break;
