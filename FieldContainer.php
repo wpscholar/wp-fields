@@ -19,25 +19,25 @@ class FieldContainer implements \IteratorAggregate {
 	/**
 	 * Check if field exists in container.
 	 *
-	 * @param string $field_name
+	 * @param string $name
 	 *
 	 * @return bool
 	 */
-	public function hasField( $field_name ) {
-		return isset( $this->_fields[ $field_name ] );
+	public function hasField( $name ) {
+		return isset( $this->_fields[ $name ] );
 	}
 
 	/**
 	 * Get a field from the container by name
 	 *
-	 * @param string $field_name
+	 * @param string $name
 	 *
 	 * @return mixed
 	 */
-	public function getField( $field_name ) {
+	public function getField( $name ) {
 		$field = null;
-		if ( $this->hasField( $field_name ) ) {
-			$field = $this->_fields[ $field_name ];
+		if ( $this->hasField( $name ) ) {
+			$field = $this->_fields[ $name ];
 		}
 
 		return $field;
@@ -53,14 +53,32 @@ class FieldContainer implements \IteratorAggregate {
 	}
 
 	/**
+	 * Add multiple fields to the container
+	 *
+	 * @param Field[] $fields
+	 */
+	public function addFields( array $fields ) {
+		foreach ( $fields as $field ) {
+			$this->addField( $field );
+		}
+	}
+
+	/**
 	 * Remove a field from the container by name
 	 *
-	 * @param string $field_name
+	 * @param string $name
 	 */
-	public function removeField( $field_name ) {
-		if ( $this->hasField( $field_name ) ) {
-			unset( $this->_fields[ $field_name ] );
+	public function removeField( $name ) {
+		if ( $this->hasField( $name ) ) {
+			unset( $this->_fields[ $name ] );
 		}
+	}
+
+	/**
+	 * Remove all fields from the container
+	 */
+	public function removeAllFields() {
+		$this->_fields = [];
 	}
 
 	/**
