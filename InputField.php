@@ -37,13 +37,18 @@ class InputField extends Field {
 		// Setup attributes
 		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
 
-		// Set default value
+		// Set type
 		if ( isset( $args['type'] ) ) {
 			$atts['type'] = $args['type'];
 		}
 
 		if ( isset( $atts['type'] ) ) {
 			$this->type = $atts['type'];
+		}
+
+		// Set default value
+		if ( isset( $args['value'] ) ) {
+			$atts['value'] = $args['value'];
 		}
 
 		if ( isset( $atts['value'] ) ) {
@@ -89,8 +94,9 @@ class InputField extends Field {
 	 */
 	public function getField() {
 
-		// Output the name and value properties
+		// Output the name, type, and value properties
 		$this->el->atts->set( 'name', esc_attr( $this->_name ) );
+		$this->el->atts->set( 'type', esc_attr( $this->type ) );
 		$this->el->atts->set( 'value', esc_attr( $this->_value ) );
 
 		return "{$this->el}";
