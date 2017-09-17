@@ -29,17 +29,16 @@ class FieldFactory {
 
 		} else if ( isset( $args['field'] ) ) {
 
-			// If 'fieldClass' is not set, but 'field' is, then use that to determine the appropriate field class.
-			switch ( $args['field'] ) {
-				case 'radio-group':
-					$fieldClass = __NAMESPACE__ . '\\RadioGroupField';
-					break;
-				case 'select':
-					$fieldClass = __NAMESPACE__ . '\\SelectField';
-					break;
-				case 'textarea':
-					$fieldClass = __NAMESPACE__ . '\\TextareaField';
-					break;
+			// Derive 'fieldClass' based on 'field' name
+
+			$fieldType = str_replace( ' ', '',
+				ucwords( str_replace( [ '-', '_' ], ' ', strtolower( $args['field'] ) ) )
+			);
+
+			$class = __NAMESPACE__ . '\\' . $fieldType . 'Field';
+
+			if ( class_exists( $class ) ) {
+				$fieldClass = $class;
 			}
 
 		}
