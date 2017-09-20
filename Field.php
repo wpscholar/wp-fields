@@ -2,9 +2,6 @@
 
 namespace wpscholar\WordPress;
 
-use wpscholar\Elements\ElementNode;
-use wpscholar\Elements\EnclosingElement;
-
 /**
  * Class Field
  *
@@ -15,26 +12,16 @@ use wpscholar\Elements\EnclosingElement;
  */
 abstract class Field {
 
-	/**
-	 * Field element
-	 *
-	 * @var ElementNode
-	 */
-	public $el;
+	use FieldStorageEngine;
 
 	/**
-	 * Label text
+	 * Field data
 	 *
-	 * @var string
-	 */
-	public $label = '';
-
-	/**
-	 * Label element
+	 * Set during construction, cannot be altered externally
 	 *
-	 * @var EnclosingElement
+	 * @var array
 	 */
-	public $labelEl;
+	protected $_data = [];
 
 	/**
 	 * Field name
@@ -44,20 +31,6 @@ abstract class Field {
 	 * @var string
 	 */
 	protected $_name;
-
-	/**
-	 * Sanitization callback
-	 *
-	 * @var callable
-	 */
-	public $sanitize = 'sanitize_text_field';
-
-	/**
-	 * Storage engine
-	 *
-	 * @var FieldStorage
-	 */
-	protected $_storage;
 
 	/**
 	 * Field value
@@ -73,72 +46,71 @@ abstract class Field {
 	 * @param array $args
 	 */
 	public function __construct( $name, array $args = [] ) {
-		$storageType = isset( $args['storage_type'] ) ? $args['storage_type'] : 'post_meta';
 		$this->_name = $name;
-		$this->label = isset( $args ['label'] ) ? $args['label'] : '';
-		$this->_storage = FieldStorageFactory::create( $storageType );
-		$this->_setUp( $args );
+		$this->_data = $args;
+		$this->value = $this->getData( 'value', '' );
+		$this->setStorageEngine( $this->getData( 'storage' ) );
 	}
 
 	/**
-	 * Setup field
+	 * Fetch value from data object.
 	 *
-	 * @param array $args
-	 */
-	abstract protected function _setUp( array $args );
-
-	/**
-	 * Fetch field value from storage engine
-	 *
-	 * @param int $id
+	 * @param string|array $key Passing an array allows you to fetch nested data
+	 * @param mixed $default
 	 *
 	 * @returns mixed
 	 */
-	public function fetch( $id ) {
-		return $this->_storage->fetch( $id, $this->name );
-	}
+	public function getData( $key, $default = null ) {
 
-	/**
-	 * Save field value to storage engine
-	 *
-	 * @param int $id
-	 * @param mixed $value
-	 */
-	public function save( $id, $value ) {
-		if ( ! is_callable( $this->sanitize ) ) {
-			throw new \InvalidArgumentException( 'Invalid field sanitization callback' );
+		$value = $default;
+
+		if ( is_string( $key ) ) {
+			if ( isset( $this->_data[ $key ] ) ) {
+				$value = $this->_data[ $key ];
+			}
 		}
-		$this->_storage->save( $id, $this->name, call_user_func( $this->sanitize, $value ) );
+
+		if ( is_array( $key ) ) {
+			$value = $this->_data;
+			$segments = $key;
+			foreach ( $segments as $segment ) {
+				if ( isset( $value[ $segment ] ) ) {
+					$value = $value[ $segment ];
+				} else {
+					$value = $default;
+					break;
+				}
+			}
+		}
+
+		return $value;
 	}
-
-	/**
-	 * Delete field value from storage engine
-	 *
-	 * @param int $id
-	 */
-	public function delete( $id ) {
-		$this->_storage->delete( $id, $this->name );
-	}
-
-	/**
-	 * Get label HTML
-	 *
-	 * @return string
-	 */
-	abstract public function getLabel();
-
-	/**
-	 * Get field HTML
-	 *
-	 * @return string
-	 */
-	abstract public function getField();
 
 	/**
 	 * Render field
 	 */
 	public function render() {
 		echo $this->__toString();
+	}
+
+	/**
+	 * Helper function for applying a label to a field
+	 *
+	 * @param string $field
+	 * @param string $label
+	 * @param string $labelPosition Can be either 'before' or 'after'
+	 *
+	 * @return string
+	 */
+	protected function _applyLabel( $field, $label, $labelPosition = 'before' ) {
+
+		$templateHandler = FieldTemplateHandler::getInstance();
+
+		return $templateHandler->asString( 'label.twig', [
+			'field'         => $field,
+			'label'         => esc_html( $label ),
+			'labelPosition' => $labelPosition,
+		] );
 	}
 
 	/**
@@ -203,8 +175,6 @@ abstract class Field {
 	 *
 	 * @return string
 	 */
-	public function __toString() {
-		return "{$this->getLabel()} {$this->getField()}";
-	}
+	abstract public function __toString();
 
 }

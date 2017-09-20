@@ -90,4 +90,18 @@ class FieldContainer implements \IteratorAggregate {
 		return new \ArrayIterator( $this->_fields );
 	}
 
+	/**
+	 * Converts the field container, including all contained fields, to a string.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return implode(
+			PHP_EOL,
+			array_map( function ( $field ) {
+				return "{$field}";
+			}, $this->_fields )
+		);
+	}
+
 }

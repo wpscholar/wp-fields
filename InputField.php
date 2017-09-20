@@ -2,10 +2,6 @@
 
 namespace wpscholar\WordPress;
 
-use wpscholar\Elements\ElementFactory;
-use wpscholar\Elements\EmptyElement;
-use wpscholar\Elements\EnclosingElement;
-
 /**
  * Class InputField
  *
@@ -14,92 +10,27 @@ use wpscholar\Elements\EnclosingElement;
 class InputField extends Field {
 
 	/**
-	 * Field element
-	 *
-	 * @var EmptyElement
-	 */
-	public $el;
-
-	/**
-	 * Input type
-	 *
-	 * @var string
-	 */
-	public $type = 'text';
-
-	/**
-	 * Set up
-	 *
-	 * @param array $args
-	 */
-	protected function _setUp( array $args ) {
-
-		// Setup attributes
-		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
-
-		// Set type
-		if ( isset( $args['type'] ) ) {
-			$atts['type'] = $args['type'];
-		}
-
-		if ( isset( $atts['type'] ) ) {
-			$this->type = $atts['type'];
-		}
-
-		// Set default value
-		if ( isset( $args['value'] ) ) {
-			$atts['value'] = $args['value'];
-		}
-
-		if ( isset( $atts['value'] ) ) {
-			$this->value = $atts['value'];
-		}
-
-		// Setup input element
-		$this->el = ElementFactory::createElement(
-			'input',
-			array_map( 'esc_attr', $atts )
-		);
-
-		// Setup label element
-		$this->labelEl = new EnclosingElement( 'label' );
-
-		// Ensure HTML id is set on input and the for attribute on label matches
-		$id = isset( $atts['id'] ) ? $atts['id'] : $this->_name;
-		$this->el->atts->set( 'id', esc_attr( $id ) );
-		$this->labelEl->atts->set( 'for', esc_attr( $id ) );
-	}
-
-	/**
-	 * Get label HTML
+	 * Return field markup as a string
 	 *
 	 * @return string
 	 */
-	public function getLabel() {
+	public function __toString() {
 
-		// If there is no label text, don't display a label
-		if ( empty( $this->label ) ) {
-			return '';
+		$templateHandler = FieldTemplateHandler::getInstance();
+
+		$output = $templateHandler->asString( 'input.twig', [
+			'type'  => $this->getData( 'type', $this->getData( [ 'atts', 'type' ], 'text' ) ),
+			'name'  => $this->name,
+			'value' => $this->value,
+			'atts'  => $this->getData( 'atts', [] ),
+		] );
+
+		$label = $this->getData( 'label' );
+		if ( $label ) {
+			$output = $this->_applyLabel( $output, $label, $this->getData( 'label_position' ) );
 		}
 
-		$this->labelEl->content = esc_html( $this->label );
-
-		return "{$this->labelEl}";
-	}
-
-	/**
-	 * Get field HTML
-	 *
-	 * @return string
-	 */
-	public function getField() {
-
-		// Output the name, type, and value properties
-		$this->el->atts->set( 'name', esc_attr( $this->_name ) );
-		$this->el->atts->set( 'type', esc_attr( $this->type ) );
-		$this->el->atts->set( 'value', esc_attr( $this->_value ) );
-
-		return "{$this->el}";
+		return $output;
 	}
 
 }

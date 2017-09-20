@@ -2,176 +2,111 @@
 
 namespace wpscholar\WordPress;
 
-use wpscholar\Elements\ElementFactory;
-use wpscholar\Elements\EmptyElement;
-use wpscholar\Elements\EnclosingElement;
-use wpscholar\Elements\TextNode;
-
 /**
  * Class CheckboxGroupField
  *
  * @package wpscholar\WordPress
- *
- * @property array $options
  */
 class CheckboxGroupField extends Field {
 
 	/**
-	 * Field element
+	 * Field constructor.
 	 *
-	 * @var EnclosingElement
-	 */
-	public $el;
-
-	/**
-	 * Field options
-	 *
-	 * @var array
-	 */
-	protected $options = [];
-
-	/**
-	 * Input type
-	 *
-	 * @var array
-	 */
-	protected $fields = [];
-
-	/**
-	 * Set up
-	 *
+	 * @param string $name
 	 * @param array $args
 	 */
-	protected function _setUp( array $args ) {
+	public function __construct( $name, array $args = [] ) {
+		parent::__construct( $name, $args );
 
-		// Setup attributes
-		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
-
-		// Set default value
-		if ( isset( $args['value'] ) ) {
-			$this->value = (array) $args['value'];
-		}
-
-		// Setup options
-		$options = isset( $args['options'] ) && is_array( $args['options'] ) ? $args['options'] : [];
-		$this->_set_options( $options );
-
-		// Setup child fields
-		foreach ( $this->options as $option ) {
-			if ( $option['label'] && $option['value'] ) {
-
-				$label = new EnclosingElement( 'label' );
-
-				$input = new EmptyElement( 'input', [
-					'name'  => $this->name,
-					'type'  => 'checkbox',
-					'value' => $option['value']
-				] );
-
-				$label->content = [
-					$input,
-					esc_html( " {$option['label']}" )
-				];
-
-				$this->fields[] = $label;
-			}
-		}
-
-		// Setup input element
-		$this->el = ElementFactory::createElement( 'fieldset', array_map( 'esc_attr', $atts ) );
-
-		// Setup label element
-		$this->labelEl = null;
-
+		$this->_sanitize = function ( array $data ) {
+			return array_map( 'sanitize_text_field', $data );
+		};
 	}
 
 	/**
-	 * Get label HTML
+	 * Return field markup as a string
 	 *
 	 * @return string
 	 */
-	public function getLabel() {
-		return $this->label;
-	}
+	public function __toString() {
 
-	/**
-	 * Get field HTML
-	 *
-	 * @return string
-	 */
-	public function getField() {
+		$templateHandler = FieldTemplateHandler::getInstance();
 
-		$this->el->removeAll();
+		$fields = [];
+		$options = $this->_normalizeOptions( $this->getData( 'options', [] ) );
 
-		if ( $this->label ) {
-			$legend = new EnclosingElement( 'legend' );
-			$legend->content = esc_html( $this->label );
-			$this->el->append( $legend );
+		foreach ( $options as $option ) {
+
+			$isSelected = in_array( $option->value, (array) $this->value );
+
+			$fields[] = new InputField( $this->name . '[]', [
+				'atts'           => $isSelected ? [ 'checked' => 'checked' ] : [],
+				'label'          => $option->label,
+				'label_position' => 'after',
+				'type'           => 'checkbox',
+				'value'          => $option->value,
+			] );
+
 		}
 
-		foreach ( $this->fields as $field ) {
-			/**
-			 * @var EnclosingElement $input
-			 */
-			$input = $field->children[0];
-			$value = $input->atts->get( 'name' );
-			$input->atts->remove( 'checked' );
-			if ( in_array( $value, (array) $this->value ) ) {
-				$input->atts->set( 'checked', 'checked' );
-			}
-			$this->el->append( new TextNode( "{$field}" ) );
-		}
-
-		return "{$this->el}";
+		return $templateHandler->asString( 'fieldset.twig', [
+			'atts'    => $this->getData( 'atts', [] ),
+			'content' => implode( '', array_map( function ( $field ) {
+				return "{$field}";
+			}, $fields ) ),
+			'legend'  => $this->getData( 'label' ),
+		] );
 	}
 
 	/**
-	 * Getter for options
+	 * Set field value
 	 *
-	 * @return array
+	 * @param mixed $value
 	 */
-	protected function _get_options() {
-		return $this->options;
+	protected function _set_value( $value ) {
+		$this->_value = (array) $value;
 	}
 
 	/**
-	 * Setter for options
+	 * Normalize options
 	 *
 	 * @param array $options
-	 */
-	protected function _set_options( array $options ) {
-		$this->options = [];
-		foreach ( $options as $option ) {
-			$this->options[] = $this->_normalizeOptionData( $option );
-		}
-	}
-
-	/**
-	 * Normalize option data.
-	 *
-	 * @param string|object|array $data
 	 *
 	 * @return array
 	 */
-	protected function _normalizeOptionData( $data ) {
+	protected function _normalizeOptions( array $options ) {
 
-		$option = [
-			'label' => '',
-			'value' => '',
-		];
+		foreach ( $options as $index => $data ) {
 
-		// If value is an object, convert to an array
-		if ( is_object( $data ) ) {
-			$data = (array) $data;
+			$option = [
+				'label' => '',
+				'value' => '',
+			];
+
+			// If value is scalar, just normalize using that value
+			if ( is_scalar( $data ) ) {
+				$option = [
+					'label' => $data,
+					'value' => $data,
+				];
+			}
+
+			// If value is an object, convert to an array
+			if ( is_object( $data ) ) {
+				$data = (array) $data;
+			}
+
+			// If value is an array, normalize alternative data structures
+			if ( is_array( $data ) ) {
+				$option['label'] = isset( $data['label'] ) ? $data['label'] : '';
+				$option['value'] = isset( $data['value'] ) ? $data['value'] : '';
+			}
+
+			$options[ $index ] = (object) $option;
+
 		}
 
-		// If value is an array, normalize alternative data structures
-		if ( is_array( $data ) ) {
-			$option['label'] = isset( $data['label'] ) ? $data['label'] : '';
-			$option['value'] = isset( $data['value'] ) ? $data['value'] : '';
-		}
-
-		return $option;
+		return $options;
 	}
 
 }

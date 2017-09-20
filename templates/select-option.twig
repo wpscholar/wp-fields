@@ -1,0 +1,5 @@
+{% set selected = option.value in value %}
+
+<option value="{{ option.value }}"{{ selected ? ' selected="selected"' : '' }}>
+    {{- option.label -}}
+</option>

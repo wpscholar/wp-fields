@@ -6,8 +6,6 @@ namespace wpscholar\WordPress;
  * Class PostMetaStorage
  *
  * @package wpscholar\WordPress
- *
- * @property string $name
  */
 class PostMetaStorage implements FieldStorage {
 
@@ -15,6 +13,7 @@ class PostMetaStorage implements FieldStorage {
 	 * Fetch field value from post meta.
 	 *
 	 * @param int $id
+	 * @param string $key
 	 *
 	 * @return mixed
 	 */
@@ -26,6 +25,7 @@ class PostMetaStorage implements FieldStorage {
 	 * Save field value to post meta.
 	 *
 	 * @param int $id
+	 * @param string $key
 	 * @param mixed $value
 	 */
 	public function save( $id, $key, $value ) {
@@ -36,6 +36,7 @@ class PostMetaStorage implements FieldStorage {
 	 * Delete field value from post meta.
 	 *
 	 * @param int $id
+	 * @param string $key
 	 */
 	public function delete( $id, $key ) {
 		delete_post_meta( $id, $key );

@@ -1,0 +1,13 @@
+{% set labelPosition = labelPosition|default('before') %}
+
+<label>
+    {%- autoescape false -%}
+        {%- if labelPosition != 'after' -%}
+            {{- label -}}
+        {%- endif -%}
+        {{- field -}}
+        {%- if labelPosition == 'after' -%}
+            {{- label -}}
+        {%- endif -%}
+    {%- endautoescape -%}
+</label>

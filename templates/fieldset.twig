@@ -1,0 +1,9 @@
+<fieldset {% include 'attributes.twig' %}>
+
+    {%- if legend -%}
+        <legend>{{- legend -}}</legend>
+    {%- endif -%}
+
+    {{- content|raw -}}
+
+</fieldset>

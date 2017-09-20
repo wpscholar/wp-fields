@@ -14,11 +14,10 @@ class FieldStorageFactory {
 	 *
 	 * @param string $storageType
 	 *
-	 * @return PostMetaStorage
+	 * @return FieldStorage
 	 */
-	public static function create( $storageType ) {
+	public static function create( $storageType = null ) {
 		switch ( $storageType ) {
-			case 'post_meta':
 			default:
 				return new PostMetaStorage();
 		}

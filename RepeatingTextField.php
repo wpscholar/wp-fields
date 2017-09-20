@@ -2,10 +2,6 @@
 
 namespace wpscholar\WordPress;
 
-use wpscholar\Elements\ElementFactory;
-use wpscholar\Elements\EmptyElement;
-use wpscholar\Elements\EnclosingElement;
-
 /**
  * Class RepeatingTextField
  *
@@ -14,100 +10,51 @@ use wpscholar\Elements\EnclosingElement;
 class RepeatingTextField extends Field {
 
 	/**
-	 * Field element
+	 * Field constructor.
 	 *
-	 * @var EnclosingElement
-	 */
-	public $el;
-
-	/**
-	 * Input type
-	 *
-	 * @var array
-	 */
-	protected $fields = [];
-
-	/**
-	 * Set up
-	 *
+	 * @param string $name
 	 * @param array $args
 	 */
-	protected function _setUp( array $args ) {
+	public function __construct( $name, array $args = [] ) {
+		parent::__construct( $name, $args );
 
-		// Setup attributes
-		$atts = isset( $args['atts'] ) ? $args['atts'] : [];
-
-		// Set default value
-		if ( isset( $args['value'] ) ) {
-			$this->value = (array) $args['value'];
-		}
-
-		// Setup fieldset
-		$this->el = ElementFactory::createElement( 'fieldset', array_map( 'esc_attr', $atts ) );
-
-		// Setup label element
-		$this->labelEl = null;
-
+		$this->_sanitize = function ( array $data ) {
+			return array_map( 'sanitize_text_field', $data );
+		};
 	}
 
 	/**
-	 * Get label HTML
+	 * Return field markup as a string
 	 *
 	 * @return string
 	 */
-	public function getLabel() {
-		return "{$this->label}";
+	public function __toString() {
+
+		$templateHandler = FieldTemplateHandler::getInstance();
+
+		$fields = [];
+		$options = $this->getData( 'options', [] );
+
+		foreach ( $options as $value ) {
+			$fields[] = new InputField( $this->name . '[]', [ 'value' => $value ] );
+		}
+
+		return $templateHandler->asString( 'fieldset.twig', [
+			'atts'    => $this->getData( 'atts', [] ),
+			'content' => implode( '', array_map( function ( $field ) use ( $templateHandler ) {
+				return $templateHandler->asString( 'repeating-text-field.twig', [ 'field' => $field ] );
+			}, $fields ) ),
+			'legend'  => $this->getData( 'label' ),
+		] );
 	}
 
 	/**
-	 * Get field HTML
+	 * Set field value
 	 *
-	 * @return string
+	 * @param mixed $value
 	 */
-	public function getField() {
-
-		$this->el->removeAll();
-
-		if ( $this->label ) {
-			$legend = new EnclosingElement( 'legend' );
-			$legend->content = esc_html( $this->label );
-			$this->el->append( $legend );
-		}
-
-		$field_container = new EnclosingElement( 'div' );
-
-		// Setup child fields
-		$values = (array) $this->value;
-		foreach ( $values as $value ) {
-			$field = new EnclosingElement( 'div' );
-			$field->content = [
-				new EmptyElement( 'input', [
-					'name'  => esc_attr( $this->name . '[]' ),
-					'type'  => 'text',
-					'value' => esc_attr( $value ),
-				] ),
-				'<span>X</span>',
-			];
-			$field_container->append( $field );
-		}
-
-		// Always add one empty field to the end
-		$empty_field = new EnclosingElement( 'div' );
-		$empty_field->content = [
-			new EmptyElement( 'input', [
-				'name'  => esc_attr( $this->name . '[]' ),
-				'type'  => 'text',
-				'value' => '',
-			] ),
-			'<span>X</span>',
-		];
-		$field_container->append( $empty_field );
-		$this->el->append( $field_container );
-
-		// Add a button for adding new fields
-		$this->el->append( '<button type="button">+ Add</button>' );
-
-		return "{$this->el}";
+	protected function _set_value( $value ) {
+		$this->_value = (array) $value;
 	}
 
 }
