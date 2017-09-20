@@ -38,9 +38,7 @@ class FieldTemplateHandler {
 	 * FieldTemplateHandler constructor.
 	 */
 	protected function __construct() {
-
-		$templatePaths = apply_filters( __METHOD__, [ __DIR__ . '/templates' ] );
-		$loader = new \Twig_Loader_Filesystem( $templatePaths );
+		$loader = new \Twig_Loader_Filesystem( $this->getTemplatePaths() );
 		$twig = new \Twig_Environment( $loader, [ 'debug' => $this->_isDebugMode() ] );
 
 		if ( $this->_isDebugMode() ) {
@@ -48,6 +46,17 @@ class FieldTemplateHandler {
 		}
 
 		$this->_twig = $twig;
+	}
+
+	/**
+	 * Get template paths
+	 *
+	 * Template paths at the beginning of the array are checked first.
+	 *
+	 * @return array
+	 */
+	protected function getTemplatePaths() {
+		return apply_filters( __METHOD__, [ __DIR__ . '/templates' ] );
 	}
 
 	/**
