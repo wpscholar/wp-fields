@@ -41,13 +41,15 @@ class RepeatingTextField extends Field {
 		// Always add one extra empty field
 		$fields[] = new InputField( $this->name . '[]' );
 
-		return $templateHandler->asString( 'fieldset.twig', [
+		$output = $templateHandler->asString( 'fieldset.twig', [
 			'atts'    => $this->getData( 'atts', [] ),
 			'content' => implode( '', array_map( function ( $field ) use ( $templateHandler ) {
 				return $templateHandler->asString( 'repeating-text-field.twig', [ 'field' => $field ] );
 			}, $fields ) ),
 			'legend'  => $this->getData( 'label' ),
 		] );
+
+		return $this->_wrap( $output );
 	}
 
 	/**

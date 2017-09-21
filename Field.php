@@ -71,7 +71,7 @@ abstract class Field {
 		}
 
 		if ( is_array( $key ) ) {
-			$value = $this->_data;
+			$value    = $this->_data;
 			$segments = $key;
 			foreach ( $segments as $segment ) {
 				if ( isset( $value[ $segment ] ) ) {
@@ -114,6 +114,17 @@ abstract class Field {
 	}
 
 	/**
+	 * Wrap field with before and after markup.
+	 *
+	 * @param string $render
+	 *
+	 * @return string
+	 */
+	protected function _wrap( $render ) {
+		return $this->getData( 'before' ) . $render . $this->getData( 'after' );
+	}
+
+	/**
 	 * Get field name
 	 *
 	 * @return string
@@ -148,7 +159,7 @@ abstract class Field {
 	 * @return mixed
 	 */
 	public function __get( $property ) {
-		$value = null;
+		$value  = null;
 		$method = "_get_{$property}";
 		if ( method_exists( $this, $method ) && is_callable( [ $this, $method ] ) ) {
 			$value = $this->$method();

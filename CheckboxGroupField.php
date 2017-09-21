@@ -32,7 +32,7 @@ class CheckboxGroupField extends Field {
 
 		$templateHandler = FieldTemplateHandler::getInstance();
 
-		$fields = [];
+		$fields  = [];
 		$options = $this->_normalizeOptions( $this->getData( 'options', [] ) );
 
 		foreach ( $options as $option ) {
@@ -49,13 +49,15 @@ class CheckboxGroupField extends Field {
 
 		}
 
-		return $templateHandler->asString( 'fieldset.twig', [
+		$output = $templateHandler->asString( 'fieldset.twig', [
 			'atts'    => $this->getData( 'atts', [] ),
 			'content' => implode( '', array_map( function ( $field ) {
 				return "{$field}";
 			}, $fields ) ),
 			'legend'  => $this->getData( 'label' ),
 		] );
+
+		return $this->_wrap( $output );
 	}
 
 	/**

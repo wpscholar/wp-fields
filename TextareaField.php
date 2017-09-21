@@ -36,7 +36,7 @@ class TextareaField extends Field {
 			$output = $this->_applyLabel( $output, $label, $this->getData( 'label_position' ) );
 		}
 
-		return $output;
+		return $this->_wrap( $output );
 	}
 
 }
