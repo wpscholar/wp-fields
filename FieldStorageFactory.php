@@ -17,10 +17,31 @@ class FieldStorageFactory {
 	 * @return FieldStorage
 	 */
 	public static function create( $storageType = null ) {
-		switch ( $storageType ) {
-			default:
-				return new PostMetaStorage();
+
+		// Default storage class
+		$storageClass = __NAMESPACE__ . '\\PostMetaStorage';
+
+		if ( class_exists( $storageType ) ) {
+
+			// If class is explicitly passed, just use that
+			$storageClass = $storageType;
+
+		} else {
+
+			// Otherwise, derive class name from storage type
+			$storageType = str_replace( ' ', '',
+				ucwords( str_replace( [ '-', '_' ], ' ', strtolower( $storageType ) ) )
+			);
+
+			$class = __NAMESPACE__ . '\\' . $storageType . 'Storage';
+
+			if ( class_exists( $class ) ) {
+				$fieldClass = $class;
+			}
 		}
+
+		return new $storageClass();
+
 	}
 
 }
