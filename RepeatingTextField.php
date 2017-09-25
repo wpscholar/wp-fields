@@ -32,21 +32,11 @@ class RepeatingTextField extends Field {
 
 		$templateHandler = FieldTemplateHandler::getInstance();
 
-		$fields = [];
-
-		foreach ( $this->value as $value ) {
-			$fields[] = new InputField( $this->name . '[]', [ 'value' => $value ] );
-		}
-
-		// Always add one extra empty field
-		$fields[] = new InputField( $this->name . '[]' );
-
-		$output = $templateHandler->asString( 'fieldset.twig', [
-			'atts'    => $this->getData( 'atts', [] ),
-			'content' => implode( '', array_map( function ( $field ) use ( $templateHandler ) {
-				return $templateHandler->asString( 'repeating-text-field.twig', [ 'field' => $field ] );
-			}, $fields ) ),
-			'legend'  => $this->getData( 'label' ),
+		$output = $templateHandler->asString( 'repeating-text-field.twig', [
+			'atts'   => $this->getData( 'atts', [] ),
+			'legend' => $this->getData( 'label' ),
+			'name'   => $this->name,
+			'value'  => array_filter( $this->value ),
 		] );
 
 		return $this->_wrap( $output );
