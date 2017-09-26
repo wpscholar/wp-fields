@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Storage;
 
 /**
  * Trait StorageEngine
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\WordPressFields\Storage
  */
 trait FieldStorageEngine {
 

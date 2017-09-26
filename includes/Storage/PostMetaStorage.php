@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Storage;
 
 /**
  * Class PostMetaStorage
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\WordPressFields\Storage
  */
 class PostMetaStorage implements FieldStorage {
 

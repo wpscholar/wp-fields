@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Storage;
 
 /**
  * Class FieldStorageFactory
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\WordPressFields\Storage
  */
 class FieldStorageFactory {
 

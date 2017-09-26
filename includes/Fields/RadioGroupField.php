@@ -1,27 +1,15 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
+
+use wpscholar\Fields\FieldTemplateHandler;
 
 /**
- * Class CheckboxGroupField
+ * Class RadioGroupField
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields\Fields
  */
-class CheckboxGroupField extends Field {
-
-	/**
-	 * Field constructor.
-	 *
-	 * @param string $name
-	 * @param array $args
-	 */
-	public function __construct( $name, array $args = [] ) {
-		parent::__construct( $name, $args );
-
-		$this->_sanitize = function ( array $data ) {
-			return array_map( 'sanitize_text_field', $data );
-		};
-	}
+class RadioGroupField extends Field {
 
 	/**
 	 * Return field markup as a string
@@ -37,13 +25,13 @@ class CheckboxGroupField extends Field {
 
 		foreach ( $options as $option ) {
 
-			$isSelected = in_array( $option->value, (array) $this->value );
+			$isSelected = $this->value === $option->value;
 
-			$fields[] = new InputField( $this->name . '[]', [
+			$fields[] = new InputField( $this->name, [
 				'atts'           => $isSelected ? [ 'checked' => 'checked' ] : [],
 				'label'          => $option->label,
 				'label_position' => 'after',
-				'type'           => 'checkbox',
+				'type'           => 'radio',
 				'value'          => $option->value,
 			] );
 
@@ -58,15 +46,6 @@ class CheckboxGroupField extends Field {
 		] );
 
 		return $this->_wrap( $output );
-	}
-
-	/**
-	 * Set field value
-	 *
-	 * @param mixed $value
-	 */
-	protected function _set_value( $value ) {
-		$this->_value = (array) $value;
 	}
 
 	/**

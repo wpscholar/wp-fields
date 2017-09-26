@@ -10,8 +10,12 @@
     }
   ],
   "autoload": {
+    "files": [
+      "includes/functions.php"
+    ],
     "psr-4": {
-      "wpscholar\\WordPress\\": ""
+      "wpscholar\\Fields\\": "includes/Fields",
+      "wpscholar\\Storage\\": "includes/Storage"
     }
   },
   "require": {

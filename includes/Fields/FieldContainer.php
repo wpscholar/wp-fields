@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
 
 /**
  * Class FieldContainer
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields\Fields
  */
 class FieldContainer implements \IteratorAggregate {
 

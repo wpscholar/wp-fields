@@ -1,11 +1,13 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\Fields\Fields;
+
+use wpscholar\Fields\FieldTemplateHandler;
 
 /**
  * Class SelectField
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields\Fields
  *
  * @property bool $isMultiSelect
  */

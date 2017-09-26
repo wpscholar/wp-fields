@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
 
 /**
  * Class FieldTemplateHandler
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields
  */
 class FieldTemplateHandler {
 

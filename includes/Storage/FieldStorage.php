@@ -1,11 +1,11 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\Storage;
 
 /**
  * Interface FieldStorage
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Storage
  */
 interface FieldStorage {
 

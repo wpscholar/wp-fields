@@ -1,11 +1,13 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
+
+use wpscholar\Fields\FieldTemplateHandler;
 
 /**
  * Class InputField
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields\Fields
  */
 class InputField extends Field {
 

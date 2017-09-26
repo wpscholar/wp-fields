@@ -1,11 +1,13 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
+
+use wpscholar\Fields\Field;
 
 /**
  * Class FieldFactory
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields
  */
 class FieldFactory {
 

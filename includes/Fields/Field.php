@@ -1,11 +1,14 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\WordPressFields\Fields;
+
+use wpscholar\Fields\FieldTemplateHandler;
+use wpscholar\Storage\FieldStorageEngine;
 
 /**
  * Class Field
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields\Fields
  *
  * @property string $name
  * @property mixed $value
@@ -116,12 +119,20 @@ abstract class Field {
 	/**
 	 * Wrap field with before and after markup.
 	 *
-	 * @param string $render
+	 * @param string $content
 	 *
 	 * @return string
 	 */
-	protected function _wrap( $render ) {
-		return $this->getData( 'before' ) . $render . $this->getData( 'after' );
+	protected function _wrap( $content ) {
+
+		$templateHandler = FieldTemplateHandler::getInstance();
+
+		$output = $templateHandler->asString( 'field-wrap.twig', [
+			'fieldType' => $this->getData( 'field', 'input' ),
+			'content'   => $content,
+		] );
+
+		return $this->getData( 'before' ) . $output . $this->getData( 'after' );
 	}
 
 	/**

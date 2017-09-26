@@ -1,11 +1,13 @@
 <?php
 
-namespace wpscholar\WordPress;
+namespace wpscholar\Fields;
+
+use wpscholar\Fields\FieldTemplateHandler;
 
 /**
  * Class RepeatingTextField
  *
- * @package wpscholar\WordPress
+ * @package wpscholar\Fields
  */
 class RepeatingTextField extends Field {
 
